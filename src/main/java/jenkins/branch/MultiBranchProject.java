@@ -2220,12 +2220,18 @@ public abstract class MultiBranchProject<P extends Job<P, R> & TopLevelItem,
             // we will use default behaviour, build anything but tags
             return !(head instanceof TagSCMHead);
         } else {
+            boolean haveStrategy = false;
             for (BranchBuildStrategy s: buildStrategies) {
-                if (s.automaticBuild(source, head, currRevision, prevRevision)) {
-                    return true;
+                if (s.isApplicable(head)) {
+                    haveStrategy = true;
+                    // Allow a strategy to veto the build request, this effectively results
+                    // in a AND logical result for all provided applicable strategies.
+                    if (!s.automaticBuild(source, head, currRevision, prevRevision)) {
+                        return false;
+                    }
                 }
             }
-            return false;
+            return haveStrategy;
         }
     }
 

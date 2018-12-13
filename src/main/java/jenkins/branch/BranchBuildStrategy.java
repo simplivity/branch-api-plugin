@@ -104,6 +104,19 @@ public abstract class BranchBuildStrategy extends AbstractDescribableImpl<Branch
                                              @CheckForNull SCMRevision prevRevision);
 
     /**
+     * SPI: Should be overridden by implementations to help select the applicable branch strategies when scanning the
+     * collection of build strategies. This is used to implement the AND logic to allow combining more than one branch
+     * strategy in the automatic build resolution.
+     * 
+     * @param head the {@link SCMHead}
+     * @return {@code true} if this strategy should be considered when scanning for automatic build evaluation
+     */
+    @Restricted(ProtectedExternally.class)
+    public boolean isApplicable(@NonNull SCMHead head) {
+        return true;
+    }
+
+    /**
      * API: Should the specified {@link SCMRevision} of the {@link SCMHead} for the specified {@link SCMSource} be
      * triggered when the {@link SCMHead} has been detected as created / modified?
      *
